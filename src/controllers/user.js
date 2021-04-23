@@ -55,10 +55,10 @@ const userController = {
   },
   newToken: async (req, res) => {
     const userId = req.body;
-    const response = await of(logoutUserService(userId));
+    const token = await of(logoutUserService(userId));
     if (response) {
-      setTokenCookie(res);
-      sendSuccessResponse(req, res, { message: SUCCESS.userLogOut, data: response });
+      setTokenCookie(res,token);
+      sendSuccessResponse(req, res, { message: SUCCESS.userLogOut, data: '' });
     } else {
       sendFailureResponse(req, res, { message: ERROR.internalServerError, status: STATUS.failed, });
     }

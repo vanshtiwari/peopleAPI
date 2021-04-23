@@ -6,6 +6,10 @@ const userRouter = express();
 userRouter.route('/logout',)
   .post(userController.logout)
 
+userRouter.route('/newtoken',)
+  .post(userController.newToken)
+
+
 userRouter.route('/logintokens',)
   .post(userController.loginTokens)
 
