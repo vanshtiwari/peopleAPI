@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 let auth;
 const loginTokens = async ({ code, type }) => {
   if (code && type) {
+    // code = btoa(code);
     const [response, err] = await of(oAuth2Client.getToken(code));
     if (err) return err;
     let token = response.tokens;
@@ -19,7 +20,7 @@ const loginTokens = async ({ code, type }) => {
     const user = await service.userinfo.get()
     console.log(user.data)
 
-    let jwtToken, userId;
+    let jwtToken, refreshToken, userId, userInfo;
     const dbUser = await db.users.findOne({
       where: { id: user.data.id },
       attributes: ['uuid', 'username']
@@ -29,24 +30,39 @@ const loginTokens = async ({ code, type }) => {
       const { uuid, username } = dbUser.dataValues;
       userId = uuid;
       jwtToken = jwt.sign({ uuid, id: user.data.id, username }, process.env.AUTH_SECRET_KEY, { expiresIn: process.env.EXPIRES_IN });
+      refreshToken = jwt.sign({ uuid, id: user.data.id, username }, process.env.REFRESH_SECRET_KEY, { expiresIn: process.env.REFRESH_EXPIRES_IN })
+
     } else {
       const { id, email, name, picture } = user.data;
-      const userInfo = { id, email, picture, username: name }
+      userInfo = { id, email, picture, username: name, refreshToken: 'none' }
       const [userdata, error] = await of(db.users.create(userInfo));
       const uuid = userdata.dataValues.uuid;
+
+      jwtToken = jwt.sign({ uuid, id }, process.env.AUTH_SECRET_KEY, { expiresIn: process.env.EXPIRES_IN });
+      refreshToken = jwt.sign({ uuid, id }, process.env.REFRESH_SECRET_KEY, { expiresIn: process.env.REFRESH_EXPIRES_IN })
+
       userId = uuid;
       let data = {
         uuid,
         type,
         ...token
       }
-      jwtToken = jwt.sign({ uuid, id, username: name }, process.env.AUTH_SECRET_KEY, { expiresIn: process.env.EXPIRES_IN });
 
+      const [refreshTokenStored, refreshTokenErr] = await of(db.users.update({ refreshToken }, {
+        where: { uuid }
+      }));
+      refreshToken = refreshTokenStored.dataValues;
+      console.log(refreshTokenStored);
       const [accData, e] = await of(db.accounts.create(data));
       const savedStatus = fetchContacts(accData.dataValues.accid);
     }
+    const finalResponse = {
+      userId,
+      ...userInfo,
+      'token': jwtToken,
+    }
     console.log(userId, jwtToken);
-    return { userId, 'token': jwtToken };
+    return { refreshToken, finalResponse };
   }
 }
 

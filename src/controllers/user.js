@@ -3,10 +3,12 @@ import {
   STATUS,
   SUCCESS,
 } from '../helpers/message.js';
-import { sendFailureResponse, sendSuccessResponse } from '../helpers/response.js';
+import { sendFailureResponse, sendSuccessResponse, setTokenCookie } from '../helpers/response.js';
 import of from '../helpers/awaitof.js'
 import { login, loginTokens } from '../services/user/login.js';
 import updateUserService from '../services/user/update.js';
+import newTokenUserService from '../services/user/newToken.js';
+import logoutUserService from '../services/user/logout.js';
 
 const userController = {
   update: async (req, res) => {
@@ -32,12 +34,34 @@ const userController = {
 
   loginTokens: async (req, res) => {
     const userCredentials = req.body;
-    const response = await loginTokens(userCredentials);
-    if (response) {
-      sendSuccessResponse(req, res, { message: SUCCESS.userAuthenticated, data: response });
+    const { finalResponse, refreshToken } = await loginTokens(userCredentials);
+    if (finalResponse) {
+      setTokenCookie(res, refreshToken);
+      sendSuccessResponse(req, res, { message: SUCCESS.userAuthenticated, data: finalResponse });
     } else {
       sendFailureResponse(req, res, { message: ERROR.invalidCred, status: STATUS.failed, });
     }
-  }
+  },
+
+  logout: async (req, res) => {
+    const userId = req.body;
+    const response = await of(logoutUserService(userId));
+    if (response) {
+      setTokenCookie(res);
+      sendSuccessResponse(req, res, { message: SUCCESS.userLogOut, data: response });
+    } else {
+      sendFailureResponse(req, res, { message: ERROR.internalServerError, status: STATUS.failed, });
+    }
+  },
+  newToken: async (req, res) => {
+    const userId = req.body;
+    const response = await of(logoutUserService(userId));
+    if (response) {
+      setTokenCookie(res);
+      sendSuccessResponse(req, res, { message: SUCCESS.userLogOut, data: response });
+    } else {
+      sendFailureResponse(req, res, { message: ERROR.internalServerError, status: STATUS.failed, });
+    }
+  },
 }
 export default userController;

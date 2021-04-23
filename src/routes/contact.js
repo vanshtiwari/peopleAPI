@@ -12,6 +12,6 @@ contactRouter.route('/',)
   .post(passportAuth, contactController.get)
 
 contactRouter.route('/:id',)
-  .put(contactController.update)
+  .put(passportAuth, contactController.update)
 
 export default contactRouter;

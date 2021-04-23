@@ -10,7 +10,7 @@ export default (passport) => {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     },
       async (jwt_payload, next) => {
-        const [user, err] = await of(db.users.findOne({ where: { id: jwt_payload.id } }));
+        const [user, err] = await of(db.users.findOne({ where: { id: jwt_payload.id, uuid: jwt_payload.uuid } }));
 
         if (err) {
           return next(err, false);

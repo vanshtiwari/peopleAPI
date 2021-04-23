@@ -9,7 +9,7 @@ const get = async ({ uuid, page }) => {
   const accid = accRes[0].dataValues.accid;
 
   const [response, errr] = await of(db.contacts.findAll({
-    limit: 5,
+    limit: 10,
     offset: page,
     where: { accid },
     attributes: { exclude: ['createdAt', 'updatedAt'] }

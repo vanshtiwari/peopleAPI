@@ -19,7 +19,18 @@ const sendFailureResponse = (req, res, obj) => {
     data: []
   })
 }
+
+const setTokenCookie = (res, token) => {
+  // create http only cookie with refresh token that expires in 7 days
+  const cookieOptions = {
+    httpOnly: true,
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  };
+  token ? res.cookie('refreshToken', token, cookieOptions) : res.clearCookie('refreshToken');
+}
+
 export {
   sendFailureResponse,
-  sendSuccessResponse
+  sendSuccessResponse,
+  setTokenCookie
 }

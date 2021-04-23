@@ -3,6 +3,9 @@ import userController from '../controllers/user.js';
 
 const userRouter = express();
 
+userRouter.route('/logout',)
+  .post(userController.logout)
+
 userRouter.route('/logintokens',)
   .post(userController.loginTokens)
 

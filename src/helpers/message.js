@@ -14,6 +14,7 @@ const SUCCESS = {
   commentChanged: "comment details changed successfully",
   commentDeleted: "comment deleted successfully",
   success: "Action has been successfully executed",
+  userLogOut: "User has been logged out",
 }
 
 const ERROR = {
