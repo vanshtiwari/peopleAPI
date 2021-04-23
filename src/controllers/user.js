@@ -55,9 +55,9 @@ const userController = {
   },
   newToken: async (req, res) => {
     const userId = req.body;
-    const token = await of(logoutUserService(userId));
+    const refreshToken = await of(newTokenUserService(userId));
     if (response) {
-      setTokenCookie(res,token);
+      setTokenCookie(res,refreshToken);
       sendSuccessResponse(req, res, { message: SUCCESS.userLogOut, data: '' });
     } else {
       sendFailureResponse(req, res, { message: ERROR.internalServerError, status: STATUS.failed, });
