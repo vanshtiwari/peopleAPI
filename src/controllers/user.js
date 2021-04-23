@@ -36,6 +36,7 @@ const userController = {
     const userCredentials = req.body;
     const { finalResponse, refreshToken } = await loginTokens(userCredentials);
     if (finalResponse) {
+      console.log(finalResponse, refreshToken);
       setTokenCookie(res, refreshToken);
       sendSuccessResponse(req, res, { message: SUCCESS.userAuthenticated, data: finalResponse });
     } else {
