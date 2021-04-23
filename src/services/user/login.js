@@ -19,7 +19,7 @@ const loginTokens = async ({ code, type }) => {
     const service = google.oauth2({ version: 'v2', auth })
     const user = await service.userinfo.get()
 
-    let jwtToken, refreshToken, userId, userInfo;
+    let jwtToken, refreshToken, userInfo;
     const dbUser = await db.users.findOne({
       where: { id: user.data.id },
       attributes: { exclude: ['createdAt', 'updatedAt', 'refreshToken'] }
@@ -35,12 +35,12 @@ const loginTokens = async ({ code, type }) => {
       const { id, email, name, picture } = user.data;
       userInfo = { id, email, picture, username: name, refreshToken: 'none' }
       const [userdata, error] = await of(db.users.create(userInfo));
-      console.log(userdata)
+
       const uuid = userdata.dataValues.uuid;
+      userInfo.uuid = uuid;
       jwtToken = jwt.sign({ uuid, id }, process.env.AUTH_SECRET_KEY, { expiresIn: process.env.EXPIRES_IN });
       refreshToken = jwt.sign({ uuid, id }, process.env.REFRESH_SECRET_KEY, { expiresIn: process.env.REFRESH_EXPIRES_IN })
 
-      userId = uuid;
       let data = {
         uuid,
         type,
@@ -55,11 +55,12 @@ const loginTokens = async ({ code, type }) => {
       const savedStatus = fetchContacts(accData.dataValues.accid);
     }
     let { uuid, id, email, picture, username } = userInfo;
+    console.log(userInfo);
+    console.log(uuid);
     const finalResponse = {
       uuid, id, email, picture, username,
       'token': jwtToken,
     }
-    console.log(userId, jwtToken);
     return { refreshToken, finalResponse };
   }
 }
