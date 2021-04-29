@@ -1,7 +1,7 @@
 import db from '../../models/index.js';
 import { oAuth2Client, SCOPES } from '../../config/google-auth';
 import of from '../../helpers/awaitof.js';
-const { google } = require('googleapis');
+import { google } from 'googleapis';
 import jwt from 'jsonwebtoken';
 
 let auth;
@@ -16,8 +16,8 @@ const loginTokens = async ({ code, type }) => {
     auth = oAuth2Client;
     token.expiry_date = token.expiry_date.toString();
 
-    const service = google.oauth2({ version: 'v2', auth })
-    const user = await service.userinfo.get()
+    const service = google.oauth2({ version: 'v2', auth });
+    const user = await service.userinfo.get();
 
     let jwtToken, refreshToken, userInfo;
     const dbUser = await db.users.findOne({
@@ -30,7 +30,9 @@ const loginTokens = async ({ code, type }) => {
       userInfo = dbUser.dataValues;
       jwtToken = jwt.sign({ uuid, id: user.data.id, username }, process.env.AUTH_SECRET_KEY, { expiresIn: process.env.EXPIRES_IN });
       refreshToken = jwt.sign({ uuid, id: user.data.id, username }, process.env.REFRESH_SECRET_KEY, { expiresIn: process.env.REFRESH_EXPIRES_IN })
-
+      await db.users.update({ refreshToken }, {
+        where: { uuid }
+      });
     } else {
       const { id, email, name, picture } = user.data;
       userInfo = { id, email, picture, username: name, refreshToken: 'none' }
@@ -55,8 +57,7 @@ const loginTokens = async ({ code, type }) => {
       const savedStatus = fetchContacts(accData.dataValues.accid);
     }
     let { uuid, id, email, picture, username } = userInfo;
-    console.log(userInfo);
-    console.log(uuid);
+
     const finalResponse = {
       uuid, id, email, picture, username,
       'token': jwtToken,
@@ -78,7 +79,7 @@ const fetchContacts = async (accid) => {
   const service = google.people({ version: 'v1', auth });
   const [response, err] = await of(service.people.connections.list({
     resourceName: 'people/me',
-    pageSize: 25,
+    pageSize: 50,
     personFields: 'names,emailAddresses,phoneNumbers',
   }));
   if (err) return err;

@@ -1,18 +1,19 @@
 import db from '../../models/index.js';
 import of from '../../helpers/awaitof.js';
+import { payload } from '../../middlewares/passport';
 
-const del = async (id) => {
-  const [contact, err] = await of(db.comments.findOne({
-    where: { id }
+const del = async (cmid) => {
+  const uuid = payload.uuid;
+  const [comment, err] = await of(db.comments.findOne({
+    where: { uuid, cmid }
   }));
-  if (contact) {
+  if (comment) {
     const [response, err] = await of(db.comments.destroy({
-      where: { id }
+      where: { cmid }
     }));
     return response || err;
   } else {
     return err
   }
-
 }
 export default del;

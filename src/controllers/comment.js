@@ -12,16 +12,18 @@ import updateCommentService from '../services/comment/update.js';
 
 const commentController = {
   get: async (req, res) => {
-    const [response, err] = await of(getCommentService());
-    if (!(response.length === 0)) {
+    const cid = req.params.cid;
+    const [response, err] = await of(getCommentService(cid));
+    if (response) {
       sendSuccessResponse(req, res, { message: SUCCESS.commentsFetched, data: response });
     } else {
-      sendFailureResponse(req, res, { message: ERROR.commentsNotFound, status: STATUS.failed, });
+      sendFailureResponse(req, res, { message: ERROR.commentNotFound, status: STATUS.failed, });
     }
   },
 
   create: async (req, res) => {
     const commentData = req.body;
+    commentData['cid'] = req.params.cid;
     const [response, err] = await of(createCommentService(commentData));
     if (response) {
       sendSuccessResponse(req, res, { message: SUCCESS.commentCreated, data: response });
@@ -32,7 +34,7 @@ const commentController = {
 
   update: async (req, res) => {
     const commentData = req.body;
-    commentData['id'] = req.params.id;
+    commentData['cmid'] = req.params.cmid;
     const [response, err] = await of(updateCommentService(commentData));
     if (response) {
       sendSuccessResponse(req, res, { message: SUCCESS.commentChanged, });
@@ -42,11 +44,11 @@ const commentController = {
   },
 
   delete: async (req, res) => {
-    const [response, err] = await of(deleteCommentService(req.params.id))
+    const [response, err] = await of(deleteCommentService(req.params.cmid))
     if (response) {
       sendSuccessResponse(req, res, { message: SUCCESS.commentDeleted, });
     } else {
-      sendFailureResponse(req, res, { message: ERROR.notFound, status: STATUS.failed, });
+      sendFailureResponse(req, res, { message: ERROR.commentNotFound, status: STATUS.failed, });
     }
   }
 }

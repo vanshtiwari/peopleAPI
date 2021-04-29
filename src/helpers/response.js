@@ -26,6 +26,7 @@ const setTokenCookie = (res, token) => {
     httpOnly: true,
     expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   };
+  console.log("Refesh token: ", token[0], token);
   token ? res.cookie('refreshToken', token, cookieOptions) : res.clearCookie('refreshToken');
 }
 

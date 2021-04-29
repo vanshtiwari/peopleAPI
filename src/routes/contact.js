@@ -9,9 +9,12 @@ const contactRouter = express();
 const passportAuth = passport.authenticate('jwt', { session: false });
 
 contactRouter.route('/',)
-  .post(passportAuth, contactController.get)
+  .get(passportAuth, contactController.get)
 
-contactRouter.route('/:id',)
+contactRouter.route('/:page',)
+  .get(passportAuth, contactController.get)
+
+contactRouter.route('/:cid',)
   .put(passportAuth, contactController.update)
 
 export default contactRouter;

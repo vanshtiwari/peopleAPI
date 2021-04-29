@@ -10,8 +10,7 @@ import updateContactService from '../services/contact/update.js';
 
 const contactController = {
   get: async (req, res) => {
-    const data = req.body;
-    const [response, err] = await of(getContactService(data));
+    const [response, err] = await of(getContactService(req.params.page));
     if (response) {
       sendSuccessResponse(req, res, { message: SUCCESS.contactsFetched, data: response });
     } else {
@@ -21,7 +20,7 @@ const contactController = {
 
   update: async (req, res) => {
     const contactData = req.body;
-    contactData['id'] = req.params.id;
+    contactData['cid'] = req.params.cid;
     const [response, err] = await of(updateContactService(contactData));
     if (response) {
       sendSuccessResponse(req, res, { message: SUCCESS.contactChanged, });

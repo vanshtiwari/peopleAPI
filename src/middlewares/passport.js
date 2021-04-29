@@ -2,6 +2,7 @@ import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
 import db from '../models/index.js';
 import of from '../helpers/awaitof.js';
+let payload;
 
 export default (passport) => {
   passport.use(
@@ -11,7 +12,7 @@ export default (passport) => {
     },
       async (jwt_payload, next) => {
         const [user, err] = await of(db.users.findOne({ where: { id: jwt_payload.id, uuid: jwt_payload.uuid } }));
-
+        payload = jwt_payload;
         if (err) {
           return next(err, false);
         }
@@ -24,3 +25,4 @@ export default (passport) => {
     )
   )
 }
+export { payload }

@@ -1,20 +1,20 @@
 const SUCCESS = {
+  authLink: "Auth link generated successfully",
   usersFetched: "Users fetched successfully",
   userCreated: "User created successfully",
-  userChanged: "User details changed successfully",
   userDeleted: "User deleted successfully",
   usercontactsFetched: "User's contact fetched successfully",
   userAuthenticated: "User logged in successfully",
   contactsFetched: "contacts fetched successfully",
   contactCreated: "contact created successfully",
   contactChanged: "contact details changed successfully",
-  contactDeleted: "contact deleted successfully",
   commentsFetched: "comments fetched successfully",
   commentCreated: "comment created successfully",
   commentChanged: "comment details changed successfully",
   commentDeleted: "comment deleted successfully",
   success: "Action has been successfully executed",
   userLogOut: "User has been logged out",
+  newTokenGenerated: "New Token Generated successfully"
 }
 
 const ERROR = {
@@ -24,7 +24,7 @@ const ERROR = {
   internalServerError: "Some internal server error",
   notFound: "User not found",
   contactsNotFound: "contacts not found",
-  commentsNotFound: "comment not found",
+  commentNotFound: "comment not found",
   invalidUser: "Invalid user",
   invalidToken: "Invalid token",
   expiredToken: "Expired token",

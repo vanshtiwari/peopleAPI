@@ -7,11 +7,11 @@ passportService(passport);
 const commentRouter = express();
 const passportAuth = passport.authenticate('jwt', { session: false });
 
-commentRouter.route('/',)
+commentRouter.route('/:cid',)
   .get(passportAuth, commentController.get)
   .post(passportAuth, commentController.create)
 
-commentRouter.route('/:id',)
+commentRouter.route('/:cmid',)
   .put(passportAuth, commentController.update)
   .delete(passportAuth, commentController.delete)
 

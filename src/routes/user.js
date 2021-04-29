@@ -4,11 +4,10 @@ import userController from '../controllers/user.js';
 const userRouter = express();
 
 userRouter.route('/logout',)
-  .post(userController.logout)
+  .get(userController.logOut)
 
 userRouter.route('/newtoken',)
   .post(userController.newToken)
-
 
 userRouter.route('/logintokens',)
   .post(userController.loginTokens)
@@ -16,7 +15,5 @@ userRouter.route('/logintokens',)
 userRouter.route('/login',)
   .get(userController.login)
 
-userRouter.route('/:id',)
-  .put(userController.update)
 
 export default userRouter;
